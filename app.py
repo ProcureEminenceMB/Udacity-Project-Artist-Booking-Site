@@ -5,6 +5,8 @@
 import json
 import dateutil.parser
 import babel
+import psycopg2
+import sys
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
@@ -235,15 +237,39 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-	# TODO: insert form data as a new Venue record in the db, instead
-	# TODO: modify data to be the data object returned from db insertion
+	success = False
+	try:
+		newVenue = Venue()
 
-	# on successful db insert, flash success
-	flash('Venue ' + request.form['name'] + ' was successfully listed!')
-	# TODO: on unsuccessful db insert, flash an error instead.
-	# e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
-	# see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-	return render_template('pages/home.html')
+		newVenue.name = request.form['name']
+		newVenue.city = request.form['city']
+		newVenue.state = request.form['state']
+		newVenue.address = request.form['address']
+		newVenue.phone = request.form['phone']
+		newVenue.genres = request.form['genres']
+		newVenue.image_link = request.form['image_link']
+		newVenue.website = request.form['website']
+		newVenue.facebook_link = request.form['facebook_link']
+		newVenue.seeking_talent = False
+		if 'seeking_talent' in request.form:
+			newVenue.seeking_talent = True
+		newVenue.seeking_description = request.form['seeking_description']
+
+		success = True
+		db.session.add(newVenue)
+		db.session.commit()
+		flash(request.form['name'] + ' was successfully listed as a venue!')
+	except:
+		db.session.rollback()
+		print(sys.exc_info())
+		flash(request.form['name'] + ' could not be listed as a venue!')
+	finally:
+		db.session.close()
+
+	if( success ):
+		return render_template('pages/home.html')
+	else:
+		return redirect('/venues/create')
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
