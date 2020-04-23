@@ -70,7 +70,7 @@ class Show(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	start_time = db.Column(db.DateTime)
 	artist_id = db.Column(db.Integer, db.ForeignKey('Artists.id'), nullable=False)
-	artist_id = db.Column(db.Integer, db.ForeignKey('Venues.id'), nullable=False)
+	venue_id = db.Column(db.Integer, db.ForeignKey('Venues.id'), nullable=False)
 
 
 #----------------------------------------------------------------------------#
