@@ -191,9 +191,6 @@ class ArtistForm(Form):
 	phone = StringField(
 		'phone'
 	)
-	image_link = StringField(
-		'image_link'
-	)
 	genres = SelectMultipleField(
 		'genres', validators=[DataRequired()],
 		choices=[
@@ -218,6 +215,18 @@ class ArtistForm(Form):
 			('Other', 'Other'),
 		]
 	)
+	image_link = StringField(
+		'image_link'
+	)
+	website = StringField(
+		'website'
+	)
 	facebook_link = StringField(
 		'facebook_link', validators=[URL()]
+	)
+	seeking_venue = BooleanField(
+		'seeking_venue'
+	)
+	seeking_description = TextAreaField(
+		'seeking_description'
 	)
