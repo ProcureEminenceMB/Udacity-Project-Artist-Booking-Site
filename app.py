@@ -246,7 +246,7 @@ def create_venue_submission():
 		newVenue.state = request.form['state']
 		newVenue.address = request.form['address']
 		newVenue.phone = request.form['phone']
-		newVenue.genres = request.form['genres']
+		newVenue.genres = ",".join(request.form.getlist('genres'))
 		newVenue.image_link = request.form['image_link']
 		newVenue.website = request.form['website']
 		newVenue.facebook_link = request.form['facebook_link']
@@ -462,7 +462,7 @@ def create_artist_submission():
 		newArtist.city = request.form['city']
 		newArtist.state = request.form['state']
 		newArtist.phone = request.form['phone']
-		newArtist.genres = request.form['genres']
+		newArtist.genres = ",".join(request.form.getlist('genres'))
 		newArtist.image_link = request.form['image_link']
 		newArtist.website = request.form['website']
 		newArtist.facebook_link = request.form['facebook_link']
