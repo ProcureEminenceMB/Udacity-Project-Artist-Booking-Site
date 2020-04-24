@@ -155,10 +155,32 @@ def search_venues():
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
-
 	venue = Venue.query.get(venue_id)
 
-	print( venue.genres )
+	pastShowList = db.session.query(Show).join(Venue).filter(Show.venue_id == venue_id).filter(Show.start_time < datetime.today()).all()
+	futureShowList = db.session.query(Show).join(Venue).filter(Show.venue_id == venue_id).filter(Show.start_time > datetime.today()).all()
+	pastShows = []
+	futureShows = []
+	pastShowCount = 0
+	futureShowCount = 0
+
+	for show in pastShowList:
+		pastShows.append({
+			"venue_id": show.venue.id,
+			"venue_name": show.venue.name,
+			"venue_image_link": show.venue.image_link,
+			"start_time": show.start_time.strftime("%Y-%m-%d %H:%M:%S")
+		})
+		pastShowCount += 1
+
+	for show in futureShowList:
+		futureShows.append({
+			"venue_id": show.venue.id,
+			"venue_name": show.venue.name,
+			"venue_image_link": show.venue.image_link,
+			"start_time": show.start_time.strftime("%Y-%m-%d %H:%M:%S")
+		})
+		futureShowCount += 1
 
 	data={
 	"id": venue.id,
@@ -169,30 +191,10 @@ def show_venue(venue_id):
 	"phone": venue.phone,
 	"seeking_talent": venue.seeking_talent,
 	"image_link": venue.image_link,
-	"past_shows": [{
-		"venue_id": 3,
-		"venue_name": "Park Square Live Music & Coffee",
-		"venue_image_link": "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80",
-		"start_time": "2019-06-15T23:00:00.000Z"
-	}],
-	"upcoming_shows": [{
-		"venue_id": 3,
-		"venue_name": "Park Square Live Music & Coffee",
-		"venue_image_link": "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80",
-		"start_time": "2035-04-01T20:00:00.000Z"
-	}, {
-		"venue_id": 3,
-		"venue_name": "Park Square Live Music & Coffee",
-		"venue_image_link": "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80",
-		"start_time": "2035-04-08T20:00:00.000Z"
-	}, {
-		"venue_id": 3,
-		"venue_name": "Park Square Live Music & Coffee",
-		"venue_image_link": "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80",
-		"start_time": "2035-04-15T20:00:00.000Z"
-	}],
-	"past_shows_count": 1,
-	"upcoming_shows_count": 3,
+	"past_shows": pastShows,
+	"upcoming_shows": futureShows,
+	"past_shows_count": pastShowCount,
+	"upcoming_shows_count": futureShowCount,
 	}
 
 	return render_template('pages/show_venue.html', venue=data)
@@ -331,40 +333,45 @@ def search_artists():
 def show_artist(artist_id):
 	artist = Artist.query.get(artist_id)
 
-	data={
-	"id": artist.id,
-	"name": artist.name,
-	"genres": artist.genres.split( ',' ),
-	"city": artist.city,
-	"state": artist.state,
-	"phone": artist.phone,
-	"seeking_venue": artist.seeking_venue,
-	"image_link": artist.image_link,
-	"past_shows": [{
-		"venue_id": 3,
-		"venue_name": "Park Square Live Music & Coffee",
-		"venue_image_link": "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80",
-		"start_time": "2019-06-15T23:00:00.000Z"
-	}],
-	"upcoming_shows": [{
-		"venue_id": 3,
-		"venue_name": "Park Square Live Music & Coffee",
-		"venue_image_link": "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80",
-		"start_time": "2035-04-01T20:00:00.000Z"
-	}, {
-		"venue_id": 3,
-		"venue_name": "Park Square Live Music & Coffee",
-		"venue_image_link": "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80",
-		"start_time": "2035-04-08T20:00:00.000Z"
-	}, {
-		"venue_id": 3,
-		"venue_name": "Park Square Live Music & Coffee",
-		"venue_image_link": "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80",
-		"start_time": "2035-04-15T20:00:00.000Z"
-	}],
-	"past_shows_count": 1,
-	"upcoming_shows_count": 3,
-	}
+	pastShowList = db.session.query(Show).join(Venue).filter(Show.artist_id == artist_id).filter(Show.start_time < datetime.today()).all()
+	futureShowList = db.session.query(Show).join(Venue).filter(Show.artist_id == artist_id).filter(Show.start_time > datetime.today()).all()
+	pastShows = []
+	futureShows = []
+	pastShowCount = 0
+	futureShowCount = 0
+
+	for show in pastShowList:
+		pastShows.append({
+			"venue_id": show.venue.id,
+			"venue_name": show.venue.name,
+			"venue_image_link": show.venue.image_link,
+			"start_time": show.start_time.strftime("%Y-%m-%d %H:%M:%S")
+		})
+		pastShowCount += 1
+
+	for show in futureShowList:
+		futureShows.append({
+			"venue_id": show.venue.id,
+			"venue_name": show.venue.name,
+			"venue_image_link": show.venue.image_link,
+			"start_time": show.start_time.strftime("%Y-%m-%d %H:%M:%S")
+		})
+		futureShowCount += 1
+
+	data = {
+		"id": artist.id,
+		"name": artist.name,
+		"genres": artist.genres.split( ',' ),
+		"city": artist.city,
+		"state": artist.state,
+		"phone": artist.phone,
+		"seeking_venue": artist.seeking_venue,
+		"image_link": artist.image_link,
+		"past_shows": pastShows,
+		"upcoming_shows": futureShows,
+		"past_shows_count": pastShowCount,
+		"upcoming_shows_count": futureShowCount,
+		}
 
 	return render_template('pages/show_artist.html', artist=data)
 
