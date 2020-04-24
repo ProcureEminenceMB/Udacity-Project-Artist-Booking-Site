@@ -30,6 +30,9 @@
 			<i class="fab fa-facebook-f"></i> {% if venue.facebook_link %}<a href="{{ venue.facebook_link }}" target="_blank">{{ venue.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
 		</p>
 		<p>
+			<a href="/venues/{{ venue.id }}/edit" target="_self">Edit Details</a>
+		</p>
+		<p>
 			<button class="delete-btn" onclick="deleteVenue({{ venue.id }})">Delete Venue</button>
 		</p>
 		{% if venue.seeking_talent %}
