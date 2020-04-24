@@ -74,6 +74,9 @@ class Show(db.Model):
 	artist_id = db.Column(db.Integer, db.ForeignKey('Artists.id'), nullable=False)
 	venue_id = db.Column(db.Integer, db.ForeignKey('Venues.id'), nullable=False)
 
+	venue = db.relationship('Venue')
+	artist = db.relationship('Artist')
+
 
 #----------------------------------------------------------------------------#
 # Filters.
