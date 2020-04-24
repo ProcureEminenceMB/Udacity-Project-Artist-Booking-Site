@@ -110,10 +110,10 @@ class VenueForm(FlaskForm):
 		]
 	)
 	image_link = StringField(
-		'image_link'
+		'image_link', validators=[URL()]
 	)
 	website = StringField(
-		'website'
+		'website', validators=[URL()]
 	)
 	facebook_link = StringField(
 		'facebook_link', validators=[URL()]
@@ -216,10 +216,10 @@ class ArtistForm(FlaskForm):
 		]
 	)
 	image_link = StringField(
-		'image_link'
+		'image_link', validators=[URL()]
 	)
 	website = StringField(
-		'website'
+		'website', validators=[URL()]
 	)
 	facebook_link = StringField(
 		'facebook_link', validators=[URL()]
